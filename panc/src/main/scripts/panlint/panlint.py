@@ -329,12 +329,15 @@ def get_string_ranges(line):
 
 def filestats_table(problem_stats):
     """Return a formatted table of problem counts per file"""
-    t = PrettyTable(['Filename', 'Problems'])
+    t = PrettyTable(['Filename'] + [severity for severity in SEVERITY_VALUE] + ['Total'])
     t.align['Filename'] = 'l'
-    t.align['Problems'] = 'r'
-    for filename, problem_count in problem_stats.iteritems():
-        if problem_count > 0:
-            t.add_row([filename, problem_count])
+    t.align['Total'] = 'r'
+    for severity in SEVERITY_VALUE:
+        t.align[severity] = 'r'
+
+    for filename, stats in problem_stats.iteritems():
+        if stats:
+            t.add_row([filename] + stats + [sum(stats)])
     t.sortby = 'Filename'
     return t
 
@@ -552,6 +555,10 @@ def main():
             for line in file_problems:
                 for problem in line.problems:
                     file_severities.append(problem.message.severity)
+
+            problem_stats[filename] = []
+            for value in SEVERITY_TEXT:
+                problem_stats[filename].append(file_severities.count(value))
 
             problem_max_severity = max(problem_max_severity, max(file_severities))
 
