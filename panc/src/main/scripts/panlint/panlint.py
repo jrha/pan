@@ -515,6 +515,13 @@ def main():
     parser.add_argument('--summary', action='store_true', help='Display a summary of problems')
     parser.add_argument('--allow_mvn_templates', action='store_true', help='Allow use of maven templates')
     parser.add_argument('--always_exit_success', action='store_true', help='Always exit cleanly even if problems are found')
+    parser.add_argument(
+        '--threshold',
+        type=str,
+        choices=SEVERITY_TEXT.values(),
+        default='Advice',
+        help='Only fail if problems of a certain level or above are found',
+    )
     group_output = parser.add_mutually_exclusive_group()
     group_output.add_argument('--debug', action='store_true', help='Enable debug output')
     group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
@@ -529,6 +536,7 @@ def main():
 
     reports = {}
     problem_stats = {}
+    problem_max_severity = 0
 
     if not args.paths:
         print 'No files were provided, not doing anything'
@@ -539,7 +547,13 @@ def main():
             file_problems = lint_file(filename, args.allow_mvn_templates)
             reports[filename] = file_problems
             problems_found += len(file_problems)
-            problem_stats[filename] = len(file_problems)
+
+            file_severities = []
+            for line in file_problems:
+                for problem in line.problems:
+                    file_severities.append(problem.message.severity)
+
+            problem_max_severity = max(problem_max_severity, max(file_severities))
 
     for report in reports:
         print_report(*report, vi=args.vi)
@@ -552,11 +566,12 @@ def main():
     if args.summary:
         print
         print '%d problems found in total' % problems_found
+        print 'Highest severity problem found was %s' % (SEVERITY_TEXT[problem_max_severity])
 
     if args.always_exit_success:
         return 0
 
-    if problems_found:
+    if problems_found and problem_max_severity >= SEVERITY_VALUE[args.threshold]:
         return 1
 
 
