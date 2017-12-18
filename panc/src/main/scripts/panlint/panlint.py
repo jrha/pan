@@ -567,7 +567,7 @@ def main():
             reports[filename] = file_problems
             problems_found += len(file_problems)
 
-            file_severities = []
+            file_severities = [0]
             for line in file_problems:
                 for problem in line.problems:
                     file_severities.append(problem.message.severity)
