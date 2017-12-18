@@ -92,9 +92,11 @@ RE_COMPONENT_USE = re.compile(r'/software/components/(?P<name>\w+)/')
 
 # Detect whether a file is part of the source tree of a component
 RE_COMPONENT_SOURCE_FILE = re.compile(r'^/?(?:\S+/)?(?:core/components/|ncm-)(?P<name>\w+)/\S+$')
+RE_COMPONENT_TEST = re.compile(r'ncm-(?P<name>\w+)/src/test/resources/')
 
 # Find where templates belonging to features have been included
 RE_FEATURE_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*(?P<name>features/\S+\w)', re.M)
+
 
 LINE_LENGTH_LIMIT = 120
 
@@ -522,6 +524,18 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
     return (line, first_line)
 
 
+def get_components_included(raw_text):
+    # Find all components included in the template
+    return set(RE_COMPONENT_INCLUDE.findall(raw_text))
+
+
+def get_unit_test_resource_name(filename):
+    result = set()
+    result.update(RE_COMPONENT_SOURCE_FILE.findall(filename))
+    result.update(RE_COMPONENT_TEST.findall(filename))
+    return result
+
+
 def lint_file(filename, allow_mvn_templates=False, ignore_components=None):
     """Run lint checks against all lines of a file."""
     if ignore_components is None:
@@ -544,13 +558,14 @@ def lint_file(filename, allow_mvn_templates=False, ignore_components=None):
     ignore_lines += find_heredoc_blocks(raw_text)
 
     # Get list of all component configs included in template
-    components_included = RE_COMPONENT_INCLUDE.findall(raw_text)
+    components_included = get_components_included(raw_text)
+
     # add ignored components
-    components_included.extend(ignore_components)
+    components_included.union(ignore_components)
 
     # Is the current file part of the source tree of a component?
     # If so, regard the component config as being included
-    components_included += RE_COMPONENT_SOURCE_FILE.findall(filename)
+    components_included.union(get_unit_test_resource_name(filename))
 
     for line_number, line_text in enumerate(raw_text.splitlines(), start=1):
         line = Line(filename, line_number, line_text.rstrip('\n'))
