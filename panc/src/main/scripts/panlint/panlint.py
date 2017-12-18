@@ -455,7 +455,7 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
                     Problem(0, len(line.text), Message(
                         'FL001',
                         SEV_ERROR,
-                        'First non-comment line must be the template type and name',
+                        'First non-blank, non-comment line must be the template type and name',
                     ))
                 )
     else:
@@ -509,7 +509,7 @@ def lint_file(filename, allow_mvn_templates=False):
     for line_number, line_text in enumerate(raw_text.splitlines(), start=1):
         line = Line(filename, line_number, line_text.rstrip('\n'))
 
-        if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line_text):
+        if line_text and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line_text):
             line, first_line = lint_line(
                 line,
                 components_included,
