@@ -482,6 +482,41 @@ class TestPanlint(unittest.TestCase):
         for p in problems:
             self.assertIsInstance(p, panlint.Problem)
 
+
+    def test_component_finders(self):
+        #Both functions should return lists of component names that can be combined into a single list
+
+        fake_template = "\n".join([
+            "object template foo.bar.example.org",
+            "",
+            "# include 'components/filecopy/config';",
+            "include 'components/metaconfig/config';",
+            "",
+            "prefix '/software/components/filecopy/config';",
+        ])
+
+        self.assertEqual(
+            panlint.get_components_included(''),
+            set(),
+        )
+
+        self.assertEqual(
+            panlint.get_components_included(fake_template),
+            set(['metaconfig']),
+        )
+
+        self.assertEqual(
+            panlint.get_unit_test_resource_name('./foo-bar/resources/config.pan'),
+            set(),
+        )
+
+        self.assertEqual(
+            panlint.get_unit_test_resource_name('./ncm-fstab/src/test/resources/fstab.pan'),
+            set(['fstab']),
+        )
+
+
+
     def test_check_line_patterns(self):
         lines = [
             ('variable UNIVERSAL_TRUTH = 42;', []),
