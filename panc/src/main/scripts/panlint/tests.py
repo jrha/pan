@@ -352,6 +352,41 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(len(panlint.lint_line(line_standard_commented, [], False)[0].problems), 0)
         self.assertEqual(len(panlint.lint_line(line_prefix_commented, [], False)[0].problems), 0)
 
+
+    def test_component_finders(self):
+        #Both functions should return lists of component names that can be combined into a single list
+
+        fake_template = "\n".join([
+            "object template foo.bar.example.org",
+            "",
+            "# include 'components/filecopy/config';",
+            "include 'components/metaconfig/config';",
+            "",
+            "prefix '/software/components/filecopy/config';",
+        ])
+
+        self.assertEqual(
+            panlint.get_components_included(''),
+            [],
+        )
+
+        self.assertEqual(
+            panlint.get_components_included(fake_template),
+            ['metaconfig'],
+        )
+
+        self.assertEqual(
+            panlint.get_unit_test_resource_name('./foo-bar/resources/config.pan'),
+            [],
+        )
+
+        self.assertEqual(
+            panlint.get_unit_test_resource_name('./ncm-fstab/src/test/resources/fstab.pan'),
+            ['fstab'],
+        )
+
+
+
     def test_check_line_patterns(self):
         lines = [
             ('variable UNIVERSAL_TRUTH = 42;', []),

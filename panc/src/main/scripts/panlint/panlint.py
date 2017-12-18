@@ -73,6 +73,7 @@ RE_HEREDOC = re.compile(r'<<(\w+);\s*$.*?\1$', re.S | re.M)
 # Find usage and inclusion of components
 RE_COMPONENT_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*components/(?P<name>\w+)/config', re.M)
 RE_COMPONENT_USE = re.compile(r'/software/components/(?P<name>\w+)/')
+RE_COMPONENT_TEST = re.compile(r'ncm-(?P<name>\w+)/src/test/resources/')
 LINE_LENGTH_LIMIT = 120
 
 SEV_ADVICE = 0
@@ -470,6 +471,18 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
     return (line, first_line)
 
 
+def get_components_included(raw_text):
+    # Find all components included in the template
+    return RE_COMPONENT_INCLUDE.findall(raw_text)
+
+
+def get_unit_test_resource_name(filename):
+    result = RE_COMPONENT_TEST.findall(filename)
+    if len(result) == 1:
+        return result
+    return []
+
+
 def lint_file(filename, allow_mvn_templates=False):
     """Run lint checks against all lines of a file."""
     problem_lines = []
@@ -488,7 +501,10 @@ def lint_file(filename, allow_mvn_templates=False):
     ignore_lines += find_heredoc_blocks(raw_text)
 
     # Get list of all component configs included in template
-    components_included = RE_COMPONENT_INCLUDE.findall(raw_text)
+    components_included = get_components_included(raw_text)
+
+    # If this file is a unit test resource, don't worry about missing includes
+    components_included += get_unit_test_resource_name(filename)
 
     for line_number, line_text in enumerate(raw_text.splitlines(), start=1):
         line = Line(filename, line_number, line_text.rstrip('\n'))
