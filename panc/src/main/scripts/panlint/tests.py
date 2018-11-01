@@ -217,6 +217,36 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 9216, '+ 42;'), []).problems, [])
         self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable EXAMPLE = 42 +'), []).problems, [])
 
+        for s in ['+','-','*','/','>','<','>=','<=']:
+            t = 'variable g = 3 %s 4' % s
+            print t
+            self.assertEqual(lc.whitespace_around_operators(t, []), (True, '', ''))
+
+        good_cond = 'variable A ?= -4;'
+        self.assertEqual(lc.whitespace_around_operators(good_cond, []), (True, '', ''))
+
+        good_negative_1 = 'variable l = list(-6, 5, -12);'
+        good_negative_2 = 'variable n = 2 * -3;'
+        good_negative_3 = 'variable n = -2 * 3;'
+
+        bad_before = 'variable b = 8* 1;'
+        dgn_before = '             ^^'
+
+        bad_after = 'variable b = 16 /2;'
+        dgn_after = '                ^^'
+
+        bad_both = 'variable d = 10-2;'
+        dgn_both = '              ^^^'
+
+        self.assertEqual(lc.whitespace_around_operators(good_negative_1, []), (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators(good_negative_2, []), (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators(good_negative_3, []), (True, '', ''))
+
+        self.assertEqual(lc.whitespace_around_operators(bad_before, []), (False, dgn_before, 'Missing space before operator'))
+        self.assertEqual(lc.whitespace_around_operators(bad_after, []), (False, dgn_after, 'Missing space after operator'))
+        self.assertEqual(lc.whitespace_around_operators(bad_both, []), (False, dgn_both, 'Missing space before and after operator'))
+
+
     def test_whitespace_after_semicolons(self):
         self._assert_lint_line(
             panlint.Line('', 1, 'foreach(k; v;  things) {'),
