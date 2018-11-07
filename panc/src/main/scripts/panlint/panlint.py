@@ -163,6 +163,18 @@ TAB_ARROW = u'\u2192'
 
 DEBUG = False
 
+def debug_range(start, end, label, problem=False):
+    """Print debug information referring to a range of characters in a single line"""
+    if not DEBUG:
+        return
+
+    label = ('DEBUG: ^^^^ %-12s |' % label)
+    diagnosis = (' ' * start) + ('^' * (end - start))
+    color = Fore.CYAN
+    if problem:
+        color = Fore.RED
+    print ''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL])
+
 
 class LineChecks(object):
     """More complex single line checks that require some logic to implement their checks"""
