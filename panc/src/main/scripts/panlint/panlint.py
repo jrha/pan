@@ -137,12 +137,10 @@ DEBUG = False
 class LineChecks(object):
     """More complex single line checks that require some logic to implement their checks"""
 
-    def whitespace_around_operators(self, line, string_ranges):
+    @staticmethod
+    def whitespace_around_operators(line, string_ranges):
         """Check a line of text to ensure that there is whitespace before and after all operators"""
         operators = RE_OPERATOR.finditer(line.text)
-
-        passed = True
-        problems = []
 
         for operator in operators:
             op = operator.group(1)
@@ -184,7 +182,7 @@ class LineChecks(object):
                 #   no space directly after assignment
                 if re.search(r'^\s', chars_after):
                     valid = False
-                    message = 'Unwanted space after minus sign (not operator)'
+                    message_text = 'Unwanted space after minus sign (not operator)'
                     end += 2
             elif op in ('-', '+', ) and sqb_before and sqb_after:
                 # something simple in square brackets
@@ -192,7 +190,7 @@ class LineChecks(object):
                 reg = re.search(r'\s', in_brackets)
                 if reg:
                     valid = False
-                    message = 'Unwanted space in simple expression in square brackets'
+                    message_text = 'Unwanted space in simple expression in square brackets'
                     start = sqb_before.start(1) + reg.start(0)
                     end = start + 1
 
@@ -209,16 +207,18 @@ class LineChecks(object):
                     end += 1
                 messages = list(messages)
                 messages.sort(None, None, True)
-                message = '%s space %s operator' % (reason, ' and '.join(messages))
+                message_text = '%s space %s operator' % (reason, ' and '.join(messages))
 
             if not valid:
                 debug_range(start, end, 'WS Operator', True)
-                message = Message('LC001', SEV_ADVICE, message)
-                problems.append(Problem(line, (start, end), message))
+                message = Message('LC001', SEV_ADVICE, message_text)
+                line.problems.append(Problem(start, end, message))
 
-            passed &= valid
+        return line
 
-        return (passed, problems)
+
+
+
 
 
 def inside_string(i, j, string_ranges):
