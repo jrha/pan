@@ -242,7 +242,7 @@ def print_fileinfo(filename, line_number, message, vi=False):
     return u'%s:%d: %s' % (filename, line_number, message)
 
 
-def print_line(text):
+def print_line(text, color=Fore.GREEN):
     """Return a formatted line of text, replacing tabs with a visible character
 
     If stdout is a tty and claims to support UTF-8 encoding, a unicode rightwards arrow (u2192) will be used for tabs,
@@ -254,7 +254,7 @@ def print_line(text):
     else:
         text = text.replace('\t', ' ')
 
-    return u''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
+    return ''.join([color, text.rstrip('\n'), Style.RESET_ALL])
 
 
 def merge_diagnoses(args):
