@@ -402,7 +402,7 @@ def check_line_patterns(line, string_ranges):
                 start, end = match.span('error')
                 debug_range(start, end, 'LineRE Match', True)
                 if not inside_string(start, end, string_ranges):
-                    problems.append(Problem(line, (start, end), message))
+                    problems.append(Problem(start, end, message))
     return problems
 
 
@@ -426,7 +426,7 @@ def check_line_paths(line):
                     start += path_start + 1
                     end += path_start + 1
                     debug_range(start, end, 'PathRE Match', True)
-                    problems.append(Problem(line, (start, end), message))
+                    problems.append(Problem(start, end, message))
 
     return problems
 
