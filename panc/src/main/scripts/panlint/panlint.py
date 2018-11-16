@@ -433,14 +433,10 @@ def check_line_paths(line):
 
 def check_line_methods(line, string_ranges):
     """Run checks defined as methods of LineChecks against line, ignoring code within specified string ranges."""
-    problems = []
+    for _, check_method in getmembers(LineChecks(), predicate=isfunction):
+        line = check_method(line, string_ranges)
 
-    for _, check_method in getmembers(LineChecks(), predicate=ismethod):
-        passed, check_problems = check_method(line, string_ranges)
-        if not passed:
-            problems += check_problems
-
-    return problems
+    return line
 
 
 def lint_line(line, components_included, first_line=False, allow_mvn_templates=False):
