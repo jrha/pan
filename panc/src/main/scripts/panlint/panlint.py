@@ -189,7 +189,8 @@ class LineChecks(object):
 
             if not valid:
                 debug_range(start, end, 'WS Operator', True)
-                line.problems.append(Problem(start, end, message_text))
+                message = Message('LC001', SEV_ADVICE, message_text)
+                line.problems.append(Problem(start, end, message))
 
         return line
 
