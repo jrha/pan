@@ -521,7 +521,7 @@ def check_line_methods(line, string_ranges):
     return line
 
 
-def lint_line(line, components_included, first_line=False, allow_mvn_templates=False):
+def lint_line(line, components_included, first_line=False, allow_mvn_templates=False, suppress=SEV_ADVICE):
     """Run all lint checks against line and return any problems found."""
     debug_line(line)
 
@@ -545,6 +545,7 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
         line.problems += check_line_paths(line)
 
         line = check_line_methods(line, string_ranges)
+        line.problems = [p for p in line.problems if p.message.severity >= suppress]
 
     return (line, first_line)
 
