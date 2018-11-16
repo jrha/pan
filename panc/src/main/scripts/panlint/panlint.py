@@ -403,33 +403,28 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
     """Run all lint checks against line and return any problems found."""
     debug_line(line)
 
-    messages = set()
-    diagnoses = []
-    problem_count = 0
-
     if first_line:
         first_line = False
         if not RE_FIRST_LINE.match(line.text):
             if not (RE_MVN_TEMPLATE.match(line.text) and allow_mvn_templates):
-                messages.add('First non-comment line must be the template type and name')
-                diagnoses.append(diagnose(0, len(line.text)))
-                problem_count += 1
-
+                line.problems.append(
+                    Problem(0, len(line.text), Message(
+                        'FL001',
+                        SEV_ERROR,
+                        'First non-comment line must be the template type and name',
+                    ))
+                )
     else:
         string_ranges = get_string_ranges(line)
         line = strip_trailing_comments(line, string_ranges)
 
-        problems = check_line_component_use(line, components_included)
-        problems += check_line_patterns(line, string_ranges)
-        problems += check_line_paths(line)
-        problems += check_line_methods(line, string_ranges)
+        line.problems += check_line_component_use(line, components_included)
+        line.problems += check_line_patterns(line, string_ranges)
+        line.problems += check_line_paths(line)
+        line = check_line_methods(line, string_ranges)
 
-        problem_count += len(problems)
-        for problem in problems:
-            diagnoses.append(diagnose(*problem.cols))
-            messages.add(problem.message)
 
-    return (diagnoses, messages, problem_count, first_line)
+    return (line, first_line)
 
 
 def lint_file(filename, allow_mvn_templates=False):
