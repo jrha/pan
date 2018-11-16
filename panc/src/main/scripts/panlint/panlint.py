@@ -21,7 +21,7 @@ import re
 import argparse
 from glob import glob
 from sys import stdout, exit as sys_exit
-from inspect import getmembers, ismethod
+from inspect import getmembers, isfunction
 from prettytable import PrettyTable
 from colorama import Fore, Style, init as colorama_init
 
