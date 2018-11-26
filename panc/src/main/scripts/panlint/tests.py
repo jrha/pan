@@ -40,6 +40,11 @@ class TestPanlint(unittest.TestCase):
         # first_line must ALWAYS be False when returned
         self.assertEqual(r_first_line, False)
 
+    def _assert_problem_details(self, problem, start, end, msg_id):
+        self.assertEqual(problem.start, start)
+        self.assertEqual(problem.end, end)
+        self.assertEqual(problem.message.id, msg_id)
+
     def test_diagnose(self):
         dummy_message = ''
         self.assertEqual(panlint.Problem(0, 0, dummy_message).diagnose(), '')
