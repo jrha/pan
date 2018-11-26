@@ -322,12 +322,12 @@ class TestPanlint(unittest.TestCase):
 
         # Test both lines with components listed as included
         self.assertEqual(
-            panlint.lint_line(line_standard, ['chkconfig'], False),
-            ([], set(), 0, False)
+            panlint.lint_line(line_standard, ['chkconfig'], False)[0].problems,
+            [],
         )
         self.assertEqual(
-            panlint.lint_line(line_prefix, ['metaconfig'], False),
-            ([], set(), 0, False)
+            panlint.lint_line(line_prefix, ['metaconfig'], False)[0].problems,
+            [],
         )
 
         # Test both lines without components listed as included
@@ -341,14 +341,8 @@ class TestPanlint(unittest.TestCase):
         )
 
         # Test both lines without components listed as included but commented out
-        self.assertEqual(
-            panlint.lint_line(line_standard_commented, [], False),
-            ([], set(), 0, False)
-        )
-        self.assertEqual(
-            panlint.lint_line(line_prefix_commented, [], False),
-            ([], set(), 0, False)
-        )
+        self.assertEqual(len(panlint.lint_line(line_standard_commented, [], False)[0].problems), 0)
+        self.assertEqual(len(panlint.lint_line(line_prefix_commented, [], False)[0].problems), 0)
 
     def test_check_line_patterns(self):
         lines = [
