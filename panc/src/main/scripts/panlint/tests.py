@@ -41,11 +41,12 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(r_first_line, False)
 
     def test_diagnose(self):
-        self.assertEqual(panlint.diagnose(0, 0), '')
-        self.assertEqual(panlint.diagnose(0, 4), '^^^^')
-        self.assertEqual(panlint.diagnose(2, 8), '  ^^^^^^')
-        self.assertEqual(panlint.diagnose(7, 7), '       ')
-        self.assertEqual(panlint.diagnose(3, -2), '   ')
+        dummy_message = ''
+        self.assertEqual(panlint.Problem(0, 0, dummy_message).diagnose(), '')
+        self.assertEqual(panlint.Problem(0, 4, dummy_message).diagnose(), '^^^^')
+        self.assertEqual(panlint.Problem(2, 8, dummy_message).diagnose(), '  ^^^^^^')
+        self.assertEqual(panlint.Problem(7, 7, dummy_message).diagnose(), '       ')
+        self.assertEqual(panlint.Problem(3, -2, dummy_message).diagnose(), '   ')
 
     def test_print_diagnosis(self):
         FORMAT = '\x1b[34m%s\x1b[39m'
