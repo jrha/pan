@@ -527,7 +527,7 @@ def main():
 
     problems_found = 0
 
-    reports = []
+    reports = {}
     problem_stats = {}
 
     if not args.paths:
@@ -536,10 +536,10 @@ def main():
 
     for path in args.paths:
         for filename in glob(path):
-            file_reports, file_problems = lint_file(filename, args.allow_mvn_templates)
-            reports += file_reports
-            problems_found += file_problems
-            problem_stats[filename] = file_problems
+            file_problems = lint_file(filename, args.allow_mvn_templates)
+            reports[filename] = file_problems
+            problems_found += len(file_problems)
+            problem_stats[filename] = len(file_problems)
 
     for report in reports:
         print_report(*report, vi=args.vi)
