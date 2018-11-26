@@ -331,14 +331,8 @@ class TestPanlint(unittest.TestCase):
         )
 
         # Test both lines without components listed as included
-        self.assertEqual(
-            panlint.lint_line(line_standard, [], False),
-            ([diag_standard], set(['Component chkconfig in use, but component config has not been included']), 1, False)
-        )
-        self.assertEqual(
-            panlint.lint_line(line_prefix, [], False),
-            ([diag_prefix], set(['Component metaconfig in use, but component config has not been included']), 1, False)
-        )
+        self._assert_problem_details(panlint.lint_line(line_standard, [], False)[0].problems[0], 22, 31, 'CU001')
+        self._assert_problem_details(panlint.lint_line(line_prefix, [], False)[0].problems[0], 29, 39, 'CU001')
 
         # Test both lines without components listed as included but commented out
         self.assertEqual(len(panlint.lint_line(line_standard_commented, [], False)[0].problems), 0)
