@@ -353,13 +353,11 @@ class TestPanlint(unittest.TestCase):
     def test_component_use(self):
         # Test a line containing a standard path assignment
         line_standard = panlint.Line('', 100, "'/software/components/chkconfig/service/rdma' = dict(")
-        diag_standard = "                      ^^^^^^^^^"
         line_standard_commented = panlint.Line('', 101, '# ' + line_standard.text)
 
         # Test a line setting a path prefix
         line_prefix = panlint.Line('', 200,
                                    "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';")
-        diag_prefix = "                             ^^^^^^^^^^"
         line_prefix_commented = panlint.Line('', 201, '# ' + line_prefix.text)
 
         # Test both lines with components listed as included
