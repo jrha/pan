@@ -27,31 +27,31 @@ class TestPanlint(unittest.TestCase):
         self.maxDiff = None
         self.longMessage = True
 
-    def _assert_lint_line(self, line, diagnoses, messages, problems, first_line=False):
-        diagnoses.sort()
+    def _assert_lint_line(self, input_line, input_diagnoses, input_messages, input_problems, input_first_line=False):
+        input_diagnoses.sort()
 
-        r_line, r_first_line = panlint.lint_line(line, [], first_line)
-        self.assertEqual(len(r_line.problems), problems)
+        result_line, result_first_line = panlint.lint_line(input_line, [], input_first_line)
+        self.assertEqual(len(result_line.problems), input_problems)
 
-        r_diagnoses = [p.diagnose() for p in r_line.problems]
-        r_diagnoses.sort()
+        result_diagnoses = [p.diagnose() for p in result_line.problems]
+        result_diagnoses.sort()
 
-        for d1, d2 in zip(diagnoses, r_diagnoses):
+        for d1, d2 in zip(input_diagnoses, result_diagnoses):
             self.assertEqual(d1, d2)
 
         # If messages is set to None, ignore the contents and just check that is not an empty set
-        if messages is None:
-            for p in r_line.problems:
+        if input_messages is None:
+            for p in result_line.problems:
                 self.assertNotEqual(p.message, '')
         else:
-            messages.sort()
-            r_messages = [p.message.text for p in r_line.problems]
-            r_messages.sort()
-            for m1, m2 in zip(messages, r_messages):
+            input_messages.sort()
+            result_messages = [p.message.text for p in result_line.problems]
+            result_messages.sort()
+            for m1, m2 in zip(input_messages, result_messages):
                 self.assertEqual(m1, m2)
 
         # first_line must ALWAYS be False when returned
-        self.assertEqual(r_first_line, False)
+        self.assertEqual(result_first_line, False)
 
     def _assert_problem_details(self, problem, start, end, msg_id):
         self.assertEqual(problem.start, start)
