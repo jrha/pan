@@ -165,18 +165,18 @@ class TestPanlint(unittest.TestCase):
 
         lc = panlint.LineChecks()
 
-        for i, (name, line) in enumerate(good.items()):
-            passed, problems = lc.whitespace_around_operators(panlint.Line('', i, line), [])
-            print [p.message.text for p in problems]
-            self.assertTrue(passed, name)
+        for i, (name, text) in enumerate(good.items()):
+            line = panlint.Line('', i, text)
+            line = lc.whitespace_around_operators(line, [])
+            problems = line.problems
             self.assertEqual(len(problems), 0, name)
 
         for name, (bad_test, bad_message, bad_diag) in bad_tests.iteritems():
-            passed, problems = lc.whitespace_around_operators(bad_test, [])
-            self.assertFalse(passed, name)
+            line = lc.whitespace_around_operators(bad_test, [])
+            problems = line.problems
             self.assertEqual(len(problems), 1, name)
             self.assertEqual(problems[0].message.text, bad_message, name)
-            self.assertEqual(panlint.diagnose(*problems[0].cols), bad_diag, name)
+            self.assertEqual(problems[0].diagnose(), bad_diag, name)
 
     def test_whitespace_after_semicolons(self):
         self._assert_lint_line(
