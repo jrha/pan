@@ -469,7 +469,7 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
 
 def lint_file(filename, allow_mvn_templates=False):
     """Run lint checks against all lines of a file."""
-    reports = []
+    problem_lines = []
     file_problem_count = 0
 
     raw_text = open(filename).read()
@@ -491,21 +491,19 @@ def lint_file(filename, allow_mvn_templates=False):
         line = Line(filename, line_number, line_text.rstrip('\n'))
 
         if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line_text):
-            diagnoses, messages, line_problem_count, first_line = lint_line(
+            line, first_line = lint_line(
                 line,
                 components_included,
                 first_line,
                 allow_mvn_templates,
             )
-            file_problem_count += line_problem_count
-
-            if messages and diagnoses:
-                messages = [m.text if isinstance(m, Message) else m for m in messages]
-                reports.append([filename, line, merge_diagnoses(diagnoses), ', '.join(messages)])
+            if line.problems:
+                problem_lines.append(line)
+                file_problem_count += len(line.problems)
         else:
             debug_ignored_line(line)
 
-    return (reports, file_problem_count)
+    return problem_lines
 
 
 def main():
