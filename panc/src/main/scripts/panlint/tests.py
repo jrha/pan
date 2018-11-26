@@ -343,22 +343,22 @@ class TestPanlint(unittest.TestCase):
     def test_check_line_patterns(self):
         lines = [
             ('variable UNIVERSAL_TRUTH = 42;', []),
-            ('variable BAD = -1;', ['Global variables should be five or more characters']),
-            ('variable bad_long = ":-(";', ['Global variables should be uppercase']),
-            ('variable bad = "all lower";', ['Global variables should be uppercase', 'Global variables should be five or more characters']),
-            ('variable tricky_onE = "Uhoh";', ['Global variables should be uppercase']),
-            ('variable camelCase = "camels!";', ['Global variables should be uppercase']),
-            ('variable TitleCase ?= -3;', ['Global variables should be uppercase']),
-            ('variable NoSpacesHere?=True;', ['Global variables should be uppercase']),
+            ('variable BAD = -1;', ['LP011']),
+            ('variable bad_long = ":-(";', ['LP010']),
+            ('variable bad = "all lower";', ['LP010', 'LP011']),
+            ('variable tricky_onE = "Uhoh";', ['LP010']),
+            ('variable camelCase = "camels!";', ['LP010']),
+            ('variable TitleCase ?= -3;', ['LP010']),
+            ('variable NoSpacesHere?=True;', ['LP010']),
         ]
 
-        for text, messages in lines:
-            messages.sort()
+        for text, ids in lines:
+            ids.sort()
             line = panlint.Line('patterns.pan', 0, text)
             problems = panlint.check_line_patterns(line, [])
-            problems = [problem.message.text for problem in problems]
+            problems = [problem.message.id for problem in problems]
             problems.sort()
-            self.assertEqual(problems, messages)
+            self.assertEqual(problems, ids)
 
 
 if __name__ == '__main__':
