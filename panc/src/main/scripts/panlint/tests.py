@@ -37,7 +37,7 @@ class TestPanlint(unittest.TestCase):
         Parameters:
             input_line (panlint.Line): Line of source code to be linted
             input_diagnoses (list of str): Expected lines of diagnosis markers
-            input_messages (list of str): Expected problem descriptions
+            input_messages (list of Message): Expected problem descriptions
             input_problems (int): Expected number of problems
             input_first_line (bool): Whether this line should be considered the first line of a file (defaults to False)
         """
