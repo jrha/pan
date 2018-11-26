@@ -106,7 +106,7 @@ class TestPanlint(unittest.TestCase):
         """
         Test all files in test_files that start with test_*.pan using lint_file
         """
-        no_errors = ([], 0)
+        no_errors = []
         dir_base = join(dirname(argv[0]), 'test_files')
         for afn in glob.glob(join(dir_base, 'test_*.pan')):
             fn = basename(afn)
