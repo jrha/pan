@@ -66,6 +66,11 @@ class TestPanlint(unittest.TestCase):
         # first_line must ALWAYS be False when returned
         self.assertEqual(result_first_line, False)
 
+    def _assert_problem_details(self, problem, start, end, msg_id):
+        self.assertEqual(problem.start, start)
+        self.assertEqual(problem.end, end)
+        self.assertEqual(problem.message.id, msg_id)
+
     def test_message_ids(self):
         line_pattern_ids = [m.id for m in panlint.LINE_PATTERNS.keys()]
         line_pattern_ids.sort()
