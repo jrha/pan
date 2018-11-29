@@ -161,20 +161,17 @@ class TestPanlint(unittest.TestCase):
                          (True, '', ''))
 
     def test_whitespace_after_semicolons(self):
-        bad_1 = panlint.Line('', 1, 'foreach(k; v;  things) {')
-        dgn_1 = ['             ^^']
-        msg_1 = ['Semicolons should be followed exactly one space or end-of-line']
-        self.assertEqual(
-            panlint.lint_line(bad_1, [], False),
-            (dgn_1, set(msg_1), 1, False)
+        self._assert_lint_line(
+            panlint.Line('', 1, 'foreach(k; v;  things) {'),
+            ['             ^^'],
+            ['Semicolons should be followed exactly one space or end-of-line'],
+            1,
         )
-
-        bad_2 = panlint.Line('', 2, 'foreach(k;    v;  things) {')
-        dgn_2 = ['          ^^^^', '                ^^']
-        msg_2 = ['Semicolons should be followed exactly one space or end-of-line']
-        self.assertEqual(
-            panlint.lint_line(bad_2, [], False),
-            (dgn_2, set(msg_2), 2, False)
+        self._assert_lint_line(
+            panlint.Line('', 2, 'foreach(k;    v;  things) {'),
+            ['          ^^^^', '                ^^'],
+            ['Semicolons should be followed exactly one space or end-of-line'],
+            2,
         )
 
     def test_profilepath_trailing_slash(self):
