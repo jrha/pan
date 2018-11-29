@@ -134,7 +134,7 @@ TAB_ARROW = u'\u2192'
 DEBUG = False
 
 
-class LineChecks:
+class LineChecks(object):
     """More complex single line checks that require some logic to implement their checks"""
 
     def whitespace_around_operators(self, line, string_ranges):
