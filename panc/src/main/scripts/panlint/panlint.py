@@ -447,8 +447,12 @@ def lint_file(filename, allow_mvn_templates=False):
         line = Line(filename, line_number, line_text.rstrip('\n'))
 
         if line.text and line.number not in ignore_lines and not RE_COMMENT_LINE.match(line.text):
-            diagnoses, messages, line_problem_count, first_line = lint_line(line, components_included, first_line,
-                                                                            allow_mvn_templates)
+            diagnoses, messages, line_problem_count, first_line = lint_line(
+                line,
+                components_included,
+                first_line,
+                allow_mvn_templates,
+            )
             file_problem_count += line_problem_count
 
             if messages and diagnoses:
