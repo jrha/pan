@@ -234,61 +234,41 @@ class TestPanlint(unittest.TestCase):
         bad_first = panlint.Line('', 122, 'variable foo = "bar";')
 
         # Test first line checking
-        self.assertEqual(panlint.lint_line(good_first, [], True), ([], set(), 0, False))
+        self._assert_lint_line(good_first, [], [], 0, True)
 
-        diagnoses, messages, problem_count, first_line = panlint.lint_line(bad_first, [], True)
-        self.assertEqual(diagnoses, ['^'*len(bad_first.text)])
-        self.assertNotEqual(messages, set())
-        self.assertEqual(problem_count, 1)
-        self.assertEqual(first_line, False)
+        self._assert_lint_line(bad_first, ['^'*len(bad_first.text)], None, 1, True)
 
         # Test component inclusion check
-        diagnoses, messages, problem_count, first_line = panlint.lint_line(
+        self._assert_lint_line(
             panlint.Line('', 123, '"/software/components/foo/bar" = 42;'),
-            [],
-            False,
+            ['                      ^^^'],
+            None,
+            1,
         )
-        self.assertEqual(diagnoses, ['                      ^^^'])
-        self.assertNotEqual(messages, set())
-        self.assertEqual(problem_count, 1)
-        self.assertEqual(first_line, False)
 
         # Test pattern based checking
-        diagnoses, messages, problem_count, first_line = panlint.lint_line(
+        self._assert_lint_line(
             panlint.Line('', 124, '   x = x + 1; # Bad Indentation'),
-            [],
-            False,
+            ['^^^'],
+            None,
+            1,
         )
-        self.assertEqual(diagnoses, ['^^^'])
-        self.assertNotEqual(messages, set())
-        self.assertEqual(problem_count, 1)
-        self.assertEqual(first_line, False)
 
         # Test method based checking
-        diagnoses, messages, problem_count, first_line = panlint.lint_line(
+        self._assert_lint_line(
             panlint.Line('', 125, 'x = x+1; # Missing space'),
-            [],
-            False,
+            ['    ^^^'],
+            None,
+            1,
         )
-        self.assertEqual(diagnoses, ['    ^^^'])
-        self.assertNotEqual(messages, set())
-        self.assertEqual(problem_count, 1)
-        self.assertEqual(first_line, False)
 
         # Test that all three check types co-exist
-        diagnoses, messages, problem_count, first_line = panlint.lint_line(
+        self._assert_lint_line(
             panlint.Line('', 126, '  "/software/components/foo/bar" = 42+7;'),
-            [],
-            False,
+            ['^^', '                        ^^^', '                                    ^^^'],
+            None,
+            3,
         )
-        self.assertItemsEqual(diagnoses, [
-            '^^',
-            '                        ^^^',
-            '                                    ^^^',
-        ])
-        self.assertNotEqual(messages, set())
-        self.assertEqual(problem_count, 3)
-        self.assertEqual(first_line, False)
 
     def test_find_annotation_blocks(self):
         test_text = '''structure template awesome;
