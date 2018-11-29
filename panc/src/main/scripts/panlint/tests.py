@@ -106,15 +106,6 @@ class TestPanlint(unittest.TestCase):
             [(0, 8), (11, 19)],
         )
 
-    def test_merge_diagnoses(self):
-        diag1 = ' ^'
-        diag2 = '       ^^^'
-        merged = ' ^     ^^^'
-        self.assertEqual(panlint.merge_diagnoses([]), '')
-        self.assertEqual(panlint.merge_diagnoses([diag1]), diag1)
-        self.assertEqual(panlint.merge_diagnoses([diag2]), diag2)
-        self.assertEqual(panlint.merge_diagnoses([diag1, diag2]), merged)
-
     def test_files(self):
         """
         Test all files in test_files that start with test_*.pan using lint_file

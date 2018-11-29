@@ -318,23 +318,8 @@ def print_line(line):
     return u''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
 
 
-def merge_diagnoses(args):
-    """Merge lines of diagnosis produced by diagnose()"""
-    if not args:
-        return ''
-
-    args = [a.rstrip() for a in args]
-    result = [' '] * max([len(a) for a in args])
-
-    for text in args:
-        for i, c in enumerate(text):
-            if c != ' ':
-                result[i] = c
-    return u''.join(result).rstrip()
-
-
 def print_diagnosis(diagnosis):
-    """Format a line of diagnosis produced by diagnose() and/or merge_diagnoses()"""
+    """Format a line of diagnosis produced by diagnose()"""
     return u''.join([Fore.BLUE, diagnosis, Fore.RESET])
 
 
