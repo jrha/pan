@@ -348,16 +348,11 @@ def debug_range(start, end, label, problem=False):
     """Print debug information referring to a range of characters in a single line"""
     if DEBUG:
         label = ('DEBUG: ^^^^ %-12s |' % label)
-        diagnosis = diagnose(start, end)
+        diagnosis = (u' ' * start) + (u'^' * (end - start))
         color = Fore.CYAN
         if problem:
             color = Fore.RED
         print(u''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL]))
-
-
-def diagnose(start, end):
-    """Format a line of diagnosis markers from a range of character positions"""
-    return (u' ' * start) + (u'^' * (end - start))
 
 
 def print_report(line, vi=False):
