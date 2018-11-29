@@ -295,13 +295,14 @@ def print_fileinfo(filename, line_number, message, vi=False):
     return u'%s:%d: %s' % (filename, line_number, message)
 
 
-def print_line(text):
+def print_line(line):
     """Return a formatted line of text, replacing tabs with a visible character
 
     If stdout is a tty and claims to support UTF-8 encoding, a unicode rightwards arrow (u2192) will be used for tabs,
     otherwise a space character ( ) will be used.
     This keeps the character counts in line with fixed-width columns while still making tabs distinguishable in output.
     """
+    text = line.text
     if stdout.isatty() and stdout.encoding == 'UTF-8':
         text = text.replace('\t', TAB_ARROW)
     else:
@@ -310,23 +311,8 @@ def print_line(text):
     return u''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
 
 
-def merge_diagnoses(args):
-    """Merge lines of diagnosis produced by diagnose()"""
-    if not args:
-        return ''
-
-    args = [a.rstrip() for a in args]
-    result = [' '] * max([len(a) for a in args])
-
-    for text in args:
-        for i, c in enumerate(text):
-            if c != ' ':
-                result[i] = c
-    return u''.join(result).rstrip()
-
-
 def print_diagnosis(diagnosis):
-    """Format a line of diagnosis produced by diagnose() and/or merge_diagnoses()"""
+    """Format a line of diagnosis produced by diagnose()"""
     return u''.join([Fore.BLUE, diagnosis, Fore.RESET])
 
 
@@ -363,10 +349,10 @@ def diagnose(start, end):
 def print_report(line, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
     print(u'')
-    messages = ', '.join(set([p.message.text for p in line.problems]))
-    print(print_fileinfo(line.filename, line.number, messages, vi=vi))
-    print(print_line(line.text))
-    print(print_diagnosis(merge_diagnoses([p.diagnose() for p in line.problems])))
+    for problem in line.problems:
+        print(print_fileinfo(line.filename, line.number, problem.message, vi=vi))
+        print(print_line(line))
+        print(print_diagnosis(problem.diagnose()))
 
 
 def get_string_ranges(line):
