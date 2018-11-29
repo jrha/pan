@@ -28,6 +28,18 @@ class TestPanlint(unittest.TestCase):
         self.maxDiff = None
         self.longMessage = True
 
+    def _assert_lint_line(self, line, diagnoses, messages, problems, first_line=False):
+        r_diagnoses, r_messages, r_problem_count, r_first_line = panlint.lint_line(line, [], first_line)
+        self.assertItemsEqual(r_diagnoses, diagnoses)
+        # If messages is set to None, ignore the contents and just check that is not an empty set
+        if messages is None:
+            self.assertNotEqual(r_messages, set())
+        else:
+            self.assertEqual([m.text for m in r_messages], messages)
+        self.assertEqual(r_problem_count, problems)
+        # first_line must ALWAYS be False when returned
+        self.assertEqual(r_first_line, False)
+
     def test_diagnose(self):
         self.assertEqual(panlint.diagnose(0, 0), '')
         self.assertEqual(panlint.diagnose(0, 4), '^^^^')
