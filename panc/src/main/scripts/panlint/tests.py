@@ -118,57 +118,59 @@ class TestPanlint(unittest.TestCase):
 
     def test_whitespace_around_operators(self):
         good = {
-            'simple': 'variable a = 5 + 3;',
-            'fn': 'variable a = afunction() + 3;',
-            'fn2': 'variable a = afunction() + 31;',
+            'simple': 'variable ALPHA = 5 + 3;',
+            'fn': 'variable ALPHA = afunction() + 3;',
+            'fn2': 'variable ALPHA = afunction() + 31;',
             'for': 'for (idx = 31; idx >= 0; idx = idx - 1) {',
-            'square_brackets': 'variable x = b[c-1];',
-            'negative':  'variable x = -1;',
+            'square_brackets': 'variable EXAMPLE = b[c-1];',
+            'negative':  'variable EXAMPLE = -1;',
             # lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
             'line_cont': '+ 42;',
-            'line_to_be_cont': 'variable x = 42 +',
+            'line_to_be_cont': 'variable EXAMPLE = 42 +',
         }
 
-        bad_before = panlint.Line('', 2048, 'variable b = 8* 1;')
-        dgn_before = '             ^^'
-
-        bad_after = panlint.Line('', 3072, 'variable b = 16 /2;')
-        dgn_after = '                ^^'
-
-        bad_both = panlint.Line('', 4096, 'variable d = 10-2;')
-        dgn_both = '              ^^^'
-
-        bad_square_brackets = panlint.Line('', 6144, 'variable x = b[c + 1];')
-        dgn_square_brackets = '                ^'
-
-        bad_negative = panlint.Line('', 8192, 'variable x = - 1;')
-        dgn_negative = '             ^^^'
-
-        bad_tests = [
-            (bad_before, 'Missing space before operator', dgn_before),
-            (bad_after, 'Missing space after operator', dgn_after),
-            (bad_both, 'Missing space before and after operator', dgn_both),
-            (bad_square_brackets, 'Unwanted space in simple expression in square brackets', dgn_square_brackets),
-            (bad_negative, 'Unwanted space after minus sign (not operator)', dgn_negative)
-        ]
+        bad_tests = {
+            'before': (
+                panlint.Line('', 2048, 'variable BOBBY = 8* 1;'),
+                'Missing space before operator',
+                '                 ^^',
+            ),
+            'after': (
+                panlint.Line('', 3072, 'variable BRILLIANT = 16 /2;'),
+                'Missing space after operator',
+                '                        ^^',
+            ),
+            'both': (
+                panlint.Line('', 4096, 'variable DAVID = 10-2;'),
+                'Missing space before and after operator',
+                '                  ^^^',
+            ),
+            'square_brackets': (
+                panlint.Line('', 6144, 'variable XAVIER = b[c + 1];'),
+                'Unwanted space in simple expression in square brackets',
+                '                     ^',
+            ),
+            'negative': (
+                panlint.Line('', 8192, 'variable XANDER = - 1;'),
+                'Unwanted space after minus sign (not operator)',
+                '                  ^^^',
+            ),
+        }
 
         lc = panlint.LineChecks()
 
-        for i, (_, line) in enumerate(good.items()):
+        for i, (name, line) in enumerate(good.items()):
             passed, problems = lc.whitespace_around_operators(panlint.Line('', i, line), [])
-            self.assertTrue(passed)
-            self.assertEqual(len(problems), 0)
+            print [p.message.text for p in problems]
+            self.assertTrue(passed, name)
+            self.assertEqual(len(problems), 0, name)
 
-        for bad_test, bad_message, bad_diag in bad_tests:
+        for name, (bad_test, bad_message, bad_diag) in bad_tests.iteritems():
             passed, problems = lc.whitespace_around_operators(bad_test, [])
-            self.assertFalse(passed)
-            self.assertEqual(len(problems), 1)
-            self.assertEqual(problems[0].message, bad_message)
-            self.assertEqual(panlint.diagnose(*problems[0].cols), bad_diag)
-
-        # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
-        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 9216, '+ 42;'), []), (True, []))
-        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable x = 42 +'), []), (True, []))
+            self.assertFalse(passed, name)
+            self.assertEqual(len(problems), 1, name)
+            self.assertEqual(problems[0].message.text, bad_message, name)
+            self.assertEqual(panlint.diagnose(*problems[0].cols), bad_diag, name)
 
     def test_whitespace_after_semicolons(self):
         bad_1 = panlint.Line('', 1, 'foreach(k; v;  things) {')
