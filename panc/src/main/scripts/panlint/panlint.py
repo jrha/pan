@@ -288,11 +288,6 @@ def debug_ignored_line(line):
         print ''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL])
 
 
-def diagnose(start, end):
-    """Format a line of diagnosis markers from a range of character positions"""
-    return (' ' * start) + ('^' * (end - start))
-
-
 def print_report(filename, line, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
     print
