@@ -22,7 +22,6 @@ from os.path import basename, dirname, join
 
 import panlint
 
-
 class TestPanlint(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
