@@ -165,15 +165,13 @@ DEBUG = False
 
 def debug_range(start, end, label, problem=False):
     """Print debug information referring to a range of characters in a single line"""
-    if not DEBUG:
-        return
-
-    label = ('DEBUG: ^^^^ %-12s |' % label)
-    diagnosis = (' ' * start) + ('^' * (end - start))
-    color = Fore.CYAN
-    if problem:
-        color = Fore.RED
-    print ''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL])
+    if DEBUG:
+        label = ('DEBUG: ^^^^ %-12s |' % label)
+        diagnosis = diagnose(start, end)
+        color = Fore.CYAN
+        if problem:
+            color = Fore.RED
+        print(u''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL]))
 
 
 class LineChecks(object):
@@ -335,17 +333,6 @@ def debug_ignored_line(line):
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line.number, 'Ignored')
         print(u''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL]))
-
-
-def debug_range(start, end, label, problem=False):
-    """Print debug information referring to a range of characters in a single line"""
-    if DEBUG:
-        label = ('DEBUG: ^^^^ %-12s |' % label)
-        diagnosis = diagnose(start, end)
-        color = Fore.CYAN
-        if problem:
-            color = Fore.RED
-        print(u''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL]))
 
 
 def diagnose(start, end):
