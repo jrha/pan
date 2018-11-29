@@ -356,7 +356,7 @@ class TestPanlint(unittest.TestCase):
             messages.sort()
             line = panlint.Line('patterns.pan', 0, text)
             problems = panlint.check_line_patterns(line, [])
-            problems = [problem.message for problem in problems]
+            problems = [problem.message.text for problem in problems]
             problems.sort()
             self.assertEqual(problems, messages)
 
