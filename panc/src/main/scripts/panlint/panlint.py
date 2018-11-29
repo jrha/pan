@@ -253,13 +253,14 @@ def print_fileinfo(filename, line_number, message, vi=False):
     return '%s:%d: %s' % (filename, line_number, message)
 
 
-def print_line(text):
+def print_line(line):
     """Return a formatted line of text, replacing tabs with a visible character
 
     If stdout is a tty and claims to support UTF-8 encoding, a unicode rightwards arrow (u2192) will be used for tabs,
     otherwise a space character ( ) will be used.
     This keeps the character counts in line with fixed-width columns while still making tabs distinguishable in output.
     """
+    text = line.text
     if stdout.isatty() and stdout.encoding == 'UTF-8':
         text = text.replace('\t', TAB_ARROW)
     else:
@@ -318,12 +319,13 @@ def diagnose(start, end):
     return (' ' * start) + ('^' * (end - start))
 
 
-def print_report(filename, line, diagnosis, message, vi=False):
+def print_report(filename, line, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
     print
-    print print_fileinfo(filename, line.number, message, vi=vi)
-    print print_line(line.text)
-    print print_diagnosis(diagnosis)
+    for problem in line.problems:
+        print print_fileinfo(filename, line.number, problem.message, vi=vi)
+        print print_line(line)
+        print print_diagnosis(problem.diagnose())
 
 
 def get_string_ranges(line):
@@ -590,8 +592,9 @@ def main():
 
             problem_max_severity = max(problem_max_severity, max(file_severities))
 
-    for report in reports:
-        print_report(*report, vi=args.vi)
+    for filename, lines in reports.iteritems():
+        for line in lines:
+            print_report(filename, line, vi=args.vi)
 
     if args.table:
         print
