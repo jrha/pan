@@ -219,32 +219,47 @@ class TestPanlint(unittest.TestCase):
 
         for s in ['+','-','*','/','>','<','>=','<=']:
             t = 'variable g = 3 %s 4' % s
-            print t
-            self.assertEqual(lc.whitespace_around_operators(t, []), (True, '', ''))
+            line = panlint.Line('tests.pan', 42, t)
+            result = lc.whitespace_around_operators(line, [])
+            self.assertEqual(line, result)
 
-        good_cond = 'variable A ?= -4;'
-        self.assertEqual(lc.whitespace_around_operators(good_cond, []), (True, '', ''))
+        good_line = panlint.Line('tests.pan', 42, 'variable A ?= -4;')
+        self.assertEqual(
+            lc.whitespace_around_operators(good_line, []),
+            good_line,
+        )
 
-        good_negative_1 = 'variable l = list(-6, 5, -12);'
-        good_negative_2 = 'variable n = 2 * -3;'
-        good_negative_3 = 'variable n = -2 * 3;'
+        good_negative_1 = panlint.Line('tests.pan', 1, 'variable l = list(-6, 5, -12);')
+        good_negative_2 = panlint.Line('tests.pan', 2, 'variable n = 2 * -3;')
+        good_negative_3 = panlint.Line('tests.pan', 3, 'variable n = -2 * 3;')
 
-        bad_before = 'variable b = 8* 1;'
+        bad_before = panlint.Line('tests.pan', 6, 'variable b = 8* 1;')
         dgn_before = '             ^^'
 
-        bad_after = 'variable b = 16 /2;'
+        bad_after = panlint.Line('tests.pan', 7, 'variable b = 16 /2;')
         dgn_after = '                ^^'
 
-        bad_both = 'variable d = 10-2;'
+        bad_both = panlint.Line('tests.pan', 8, 'variable d = 10-2;')
         dgn_both = '              ^^^'
 
-        self.assertEqual(lc.whitespace_around_operators(good_negative_1, []), (True, '', ''))
-        self.assertEqual(lc.whitespace_around_operators(good_negative_2, []), (True, '', ''))
-        self.assertEqual(lc.whitespace_around_operators(good_negative_3, []), (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators(good_negative_1, []), good_negative_1)
+        self.assertEqual(lc.whitespace_around_operators(good_negative_2, []), good_negative_2)
+        self.assertEqual(lc.whitespace_around_operators(good_negative_3, []), good_negative_3)
 
-        self.assertEqual(lc.whitespace_around_operators(bad_before, []), (False, dgn_before, 'Missing space before operator'))
-        self.assertEqual(lc.whitespace_around_operators(bad_after, []), (False, dgn_after, 'Missing space after operator'))
-        self.assertEqual(lc.whitespace_around_operators(bad_both, []), (False, dgn_both, 'Missing space before and after operator'))
+        res_before = lc.whitespace_around_operators(bad_before, [])
+        self.assertEqual(len(res_before.problems), 1)
+        self.assertEqual(res_before.problems[0].diagnose(), dgn_before)
+        self.assertEqual(res_before.problems[0].message.text, 'Missing space before operator')
+
+        res_after = lc.whitespace_around_operators(bad_after, [])
+        self.assertEqual(len(res_after.problems), 1)
+        self.assertEqual(res_after.problems[0].diagnose(), dgn_after)
+        self.assertEqual(res_after.problems[0].message.text, 'Missing space after operator')
+
+        res_both = lc.whitespace_around_operators(bad_both, [])
+        self.assertEqual(len(res_both.problems), 1)
+        self.assertEqual(res_both.problems[0].diagnose(), dgn_both)
+        self.assertEqual(res_both.problems[0].message.text, 'Missing space before and after operator')
 
 
     def test_whitespace_after_semicolons(self):
