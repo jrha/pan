@@ -25,7 +25,6 @@ import six
 
 import panlint
 
-
 class TestPanlint(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
