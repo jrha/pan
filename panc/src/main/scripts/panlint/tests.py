@@ -397,7 +397,7 @@ class TestPanlint(unittest.TestCase):
         for text, messages in lines:
             line = panlint.Line('patterns.pan', 0, text)
             messages = set(messages)
-            m = panlint.check_line_patterns(line, [])[1]
+            m = panlint.check_line_patterns(line, [])
             self.assertEqual(m, messages)
 
 
