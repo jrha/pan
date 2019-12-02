@@ -171,21 +171,19 @@ class TestPanlint(unittest.TestCase):
 
         lc = panlint.LineChecks()
 
-        for i, (_, line) in enumerate(good.items()):
-            passed, _, message = lc.whitespace_around_operators(panlint.Line('', i, line), [])
-            self.assertTrue(passed)
-            self.assertEqual(message, '')
+        for i, (name, line) in enumerate(good.items()):
+            result = lc.whitespace_around_operators(panlint.Line('%s.pan' % name, i, line), [])
+            self.assertEqual(result.problems, [])
 
-        for bad_test, bad_message, bad_diag in bad_tests:
-            passed, diag, message = lc.whitespace_around_operators(bad_test, [])
-            self.assertFalse(passed)
-            self.assertEqual(message, bad_message)
-            self.assertEqual(diag, bad_diag)
+        for bad_line, bad_message, bad_diag in bad_tests:
+            result = lc.whitespace_around_operators(bad_line, [])
+            self.assertEqual(len(result.problems), 1)
+            self.assertEqual(result.problems[0].message, bad_message)
+            self.assertEqual(result.problems[0].diagnose(), bad_diag)
 
         # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
-        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 9216, '+ 42;'), []), (True, '', ''))
-        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable x = 42 +'), []),
-                         (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 9216, '+ 42;'), []).problems, [])
+        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable x = 42 +'), []).problems, [])
 
     def test_whitespace_after_semicolons(self):
         self._assert_lint_line(
