@@ -165,8 +165,7 @@ class LineChecks:
 
             if not valid:
                 debug_range(start, end, 'WS Operator', True)
-                message = Message('LC001', SEV_ADVICE, message_text)
-                line.problems.append(Problem(start, end, message))
+                line.problems.append(Problem(start, end, message_text))
 
         return line
 
@@ -408,11 +407,7 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
         if not RE_FIRST_LINE.match(line.text):
             if not (RE_MVN_TEMPLATE.match(line.text) and allow_mvn_templates):
                 line.problems.append(
-                    Problem(0, len(line.text), Message(
-                        'FL001',
-                        SEV_ERROR,
-                        'First non-comment line must be the template type and name',
-                    ))
+                    Problem(0, len(line.text), 'First non-comment line must be the template type and name')
                 )
     else:
         string_ranges = get_string_ranges(line)
