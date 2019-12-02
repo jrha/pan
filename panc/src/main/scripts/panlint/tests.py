@@ -46,18 +46,13 @@ class TestPanlint(unittest.TestCase):
                 self.assertNotEqual(p.message, '')
         else:
             messages.sort()
-            r_messages = [p.message.text for p in r_line.problems]
+            r_messages = [p.message for p in r_line.problems]
             r_messages.sort()
             for m1, m2 in zip(messages, r_messages):
                 self.assertEqual(m1, m2)
 
         # first_line must ALWAYS be False when returned
         self.assertEqual(r_first_line, False)
-
-    def _assert_problem_details(self, problem, start, end, msg_id):
-        self.assertEqual(problem.start, start)
-        self.assertEqual(problem.end, end)
-        self.assertEqual(problem.message.id, msg_id)
 
     def test_diagnose(self):
         dummy_message = ''
