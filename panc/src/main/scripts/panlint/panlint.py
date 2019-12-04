@@ -258,12 +258,13 @@ def diagnose(start, end):
     return (' ' * start) + ('^' * (end - start))
 
 
-def print_report(filename, line, diagnosis, message, vi=False):
+def print_report(line, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
     print('')
-    print(print_fileinfo(filename, line.number, message, vi=vi))
-    print(print_line(line.text))
-    print(print_diagnosis(diagnosis))
+    for problem in line.problems:
+        print(print_fileinfo(line.filename, line.number, problem.message, vi=vi))
+        print(print_line(line.text))
+        print(print_diagnosis(problem.diagnose()))
 
 
 def get_string_ranges(line):
