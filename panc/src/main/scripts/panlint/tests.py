@@ -98,12 +98,17 @@ class TestPanlint(unittest.TestCase):
         """
         no_errors = ([], 0)
         dir_base = join(dirname(argv[0]), 'test_files')
-        for afn in glob.glob(join(dir_base, '/test_*.pan')):
+        for afn in glob.glob(join(dir_base, 'test_*.pan')):
             fn = basename(afn)
-            if fn.startswith('test_good'):
+            good_file = fn.startswith('test_good_')
+            bad_file = fn.startswith('test_bad_')
+
+            self.assertTrue(good_file or bad_file, 'test_files: unknown testfile ' + afn)
+
+            if good_file:
                 self.assertEqual(panlint.lint_file(afn), no_errors)
-            else:
-                self.assertTrue(False, 'test_files: unknown testfile ' + afn)
+            elif bad_file:
+                self.assertNotEqual(panlint.lint_file(afn), no_errors)
 
     def test_mvn_templates(self):
         dir_base = join(dirname(argv[0]), 'test_files')
