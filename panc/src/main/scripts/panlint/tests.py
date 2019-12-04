@@ -32,6 +32,11 @@ class TestPanlint(unittest.TestCase):
         diagnoses.sort()
 
         r_line, r_first_line = panlint.lint_line(line, [], first_line)
+
+        # Are the types of the return values as expected?
+        self.assertIsInstance(r_line, panlint.Line)
+        self.assertIsInstance(r_first_line, bool)
+
         self.assertEqual(len(r_line.problems), problems)
 
         r_diagnoses = [p.diagnose() for p in r_line.problems]
