@@ -340,7 +340,7 @@ def print_report(line, vi=False):
     print(u'')
     for problem in line.problems:
         print(print_fileinfo(line.filename, line.number, problem.message, vi=vi))
-        print(print_line(line))
+        print(print_line(line.text))
         print(print_diagnosis(problem.diagnose()))
 
 

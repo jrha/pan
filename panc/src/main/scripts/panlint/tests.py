@@ -581,7 +581,7 @@ class TestPanlint(unittest.TestCase):
 
         expected_output = '\n'.join([
             '',
-            'fake.pan:7: Everything is Fine',
+            'fake.pan:7: Advice: Everything is Fine',
             '\x1b[32mThis is a FAKE line\x1b[39m',
             '\x1b[34m          ^^^^\x1b[39m',
             '',
