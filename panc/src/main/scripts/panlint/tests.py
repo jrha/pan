@@ -238,25 +238,31 @@ class TestPanlint(unittest.TestCase):
         bad_line_1 = panlint.Line('', 22, '"/system/hostname/" = "bar.example.org";')
         bad_diag_1 = ['                 ^']
         bad_msg_1 = ['Unnecessary trailing slash at end of profile path']
-        self.assertEqual(
-            panlint.lint_line(bad_line_1, [], False),
-            (bad_diag_1, set(bad_msg_1), 1, False)
+        self._assert_lint_line(
+            bad_line_1,
+            bad_diag_1,
+            bad_msg_1,
+            1,
         )
 
         bad_line_2 = panlint.Line('', 77, '"/system/hostname////////" = "bob.example.org";')
         bad_diag_2 = ['                 ^^^^^^^^']
         bad_msg_2 = ['Unnecessary trailing slash at end of profile path']
-        self.assertEqual(
-            panlint.lint_line(bad_line_2, [], False),
-            (bad_diag_2, set(bad_msg_2), 1, False)
+        self._assert_lint_line(
+            bad_line_2,
+            bad_diag_2,
+            bad_msg_2,
+            1,
         )
 
         bad_line_3 = panlint.Line('', 182, "prefix '/system/aii/osinstall/ks/';")
         bad_diag_3 = ['                                ^']
         bad_msg_3 = ['Unnecessary trailing slash at end of profile path']
-        self.assertEqual(
-            panlint.lint_line(bad_line_3, [], False),
-            (bad_diag_3, set(bad_msg_3), 1, False)
+        self._assert_lint_line(
+            bad_line_3,
+            bad_diag_3,
+            bad_msg_3,
+            1,
         )
 
     def test_lint_line(self):
@@ -264,7 +270,12 @@ class TestPanlint(unittest.TestCase):
         bad_first = panlint.Line('', 122, 'variable foo = "bar";')
 
         # Test first line checking
-        self.assertEqual(panlint.lint_line(good_first, [], True), ([], set(), 0, False))
+        self._assert_lint_line(
+            good_first,
+            [],
+            [],
+            0,
+        )
 
         results, first_line = panlint.lint_line(bad_first, [], True)
         self.assertIsInstance(results, panlint.Line)
@@ -385,23 +396,31 @@ class TestPanlint(unittest.TestCase):
         )
 
         # Test both lines without components listed as included
-        self.assertEqual(
-            panlint.lint_line(line_standard, [], False),
-            ([diag_standard], set(['Component chkconfig in use, but component config has not been included']), 1, False)
+        self._assert_lint_line(
+            line_standard,
+            [diag_standard],
+            ['Component chkconfig in use, but component config has not been included'],
+            1,
         )
-        self.assertEqual(
-            panlint.lint_line(line_prefix, [], False),
-            ([diag_prefix], set(['Component metaconfig in use, but component config has not been included']), 1, False)
+        self._assert_lint_line(
+            line_prefix,
+            [diag_prefix],
+            ['Component metaconfig in use, but component config has not been included'],
+            1,
         )
 
         # Test both lines without components listed as included but commented out
-        self.assertEqual(
-            panlint.lint_line(line_standard_commented, [], False),
-            ([], set(), 0, False)
+        self._assert_lint_line(
+            line_standard_commented,
+            [],
+            [],
+            0,
         )
-        self.assertEqual(
-            panlint.lint_line(line_prefix_commented, [], False),
-            ([], set(), 0, False)
+        self._assert_lint_line(
+            line_prefix_commented,
+            [],
+            [],
+            0,
         )
 
     def test_check_line_component_use(self):
