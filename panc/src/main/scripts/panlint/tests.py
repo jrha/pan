@@ -50,6 +50,14 @@ class TestPanlint(unittest.TestCase):
         self.assertIsInstance(result_line, panlint.Line)
         self.assertIsInstance(result_first_line, bool)
 
+        # Are the expected number of problems found with the line?
+        self.assertEqual(len(result_line.problems), input_problems)
+
+        # Are all the problems instances of a Problem object?
+        for p in result_line.problems:
+            self.assertIsInstance(p, panlint.Problem)
+
+        # Are the diagnosis markers generated correctly?
         result_diagnoses = [p.diagnose() for p in result_line.problems]
         result_diagnoses.sort()
 
