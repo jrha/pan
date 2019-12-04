@@ -402,6 +402,10 @@ class TestPanlint(unittest.TestCase):
             line = panlint.Line('patterns.pan', 0, text)
             messages = set(messages)
             problems = panlint.check_line_patterns(line, [])
+
+            self.assertIsInstance(problems, list)
+            for p in problems:
+                self.assertIsInstance(p, panlint.Problem)
             self.assertEqual(set([p.message for p in problems]), messages)
 
 
