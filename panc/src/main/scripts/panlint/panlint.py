@@ -343,7 +343,7 @@ def check_line_component_use(line, components_included):
             start, end = match.span('name')
             debug_range(start, end, 'ComponentUse', True)
             message = 'Component %s in use, but component config has not been included' % match.group('name')
-            problems.append(Problem(line, (start, end), message))
+            problems.append(Problem(start, end, message))
     return problems
 
 
