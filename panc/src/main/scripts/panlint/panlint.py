@@ -22,7 +22,7 @@ import argparse
 import re
 from glob import glob
 from sys import stdout, exit as sys_exit
-from inspect import getmembers, ismethod
+from inspect import getmembers, isfunction
 import six
 from colorama import Fore, Style, init as colorama_init
 from prettytable import PrettyTable
@@ -389,14 +389,10 @@ def check_line_paths(line):
 
 def check_line_methods(line, string_ranges):
     """Run checks defined as methods of LineChecks against line, ignoring code within specified string ranges."""
-    problems = []
+    for _, check_method in getmembers(LineChecks(), predicate=isfunction):
+        line = check_method(line, string_ranges)
 
-    for _, check_method in getmembers(LineChecks(), predicate=ismethod):
-        passed, check_problems = check_method(line, string_ranges)
-        if not passed:
-            problems += check_problems
-
-    return problems
+    return line
 
 
 def lint_line(line, components_included, first_line=False, allow_mvn_templates=False):

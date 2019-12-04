@@ -430,14 +430,14 @@ class TestPanlint(unittest.TestCase):
             self.assertIsInstance(p, panlint.Problem)
 
     def test_check_line_methods(self):
-        problems = panlint.check_line_methods(
+        result = panlint.check_line_methods(
             panlint.Line('foo.pan', 251, "'/software/components/bar' = 5+5;"),
             [(0, 25)],
         )
 
-        self.assertIsInstance(problems, list)
-        self.assertEqual(len(problems), 1)
-        for p in problems:
+        self.assertIsInstance(result, panlint.Line)
+        self.assertEqual(len(result.problems), 1)
+        for p in result.problems:
             self.assertIsInstance(p, panlint.Problem)
 
 
