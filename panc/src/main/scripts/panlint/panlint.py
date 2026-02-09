@@ -583,11 +583,11 @@ def lint_file(filename, allow_mvn_templates=False, ignore_components=None, suppr
     components_included = get_components_included(raw_text)
 
     # add ignored components
-    components_included.union(ignore_components)
+    components_included = components_included.union(set(ignore_components))
 
     # Is the current file part of the source tree of a component?
     # If so, regard the component config as being included
-    components_included.union(get_components_from_filename(filename))
+    components_included = components_included.union(get_components_from_filename(filename))
 
     # Start out with no check suppression
     suppressors = set()

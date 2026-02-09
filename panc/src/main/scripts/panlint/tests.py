@@ -20,7 +20,7 @@ import unittest
 from sys import argv
 from os.path import basename, dirname, join
 from io import StringIO
-import mock
+from unittest import mock
 import six
 
 import panlint
