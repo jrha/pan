@@ -205,6 +205,7 @@ class TestPanlint(unittest.TestCase):
             'list_negatives': 'variable LARRY = list(-6, 5, -12);',
             'negative_first': 'variable NEVER = -2 * 3;',
             'negative_after': 'variable NAMED = 2 * -3;',
+            'if_negatives': 'variable SIZE = if (SPACE == -1) -1 else SPACE / 5;',
         }
 
         bad = {
