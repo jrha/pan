@@ -193,7 +193,7 @@ class LineChecks:
             chars_after = line.text[end:]
 
             # simple statement text in square brackets; if any
-            # the "simple" pattern: letters, digtis, +/- operator, minus sign
+            # the "simple" pattern: letters, digits, +/- operator, minus sign
             #    also whitespace, those are invalid
             sqb_simple = r'\s\w\d+-'
 
@@ -207,20 +207,21 @@ class LineChecks:
                 # ignore fake heredoc operator
                 continue
             elif op == '-' and (
-                    (
-                        re.search(r'[^\w\s)=]\s*$', chars_before) and re.search(r'^\s*\d+\s*[^\w\s]', chars_after)
-                    ) or (
-                        re.search(r'=\s*$', chars_before) and re.search(r'^\s*\d+', chars_after)
-                    )
-            ):
                 # -\d not preceded or followed by eg variable name
-                # first or:
-                #   use [^\w\s] instead of \W to avoid backtracking winning from greedy *
-                #   search(r'\W\s*$', "x ") gives a match
-                #     chars_before: allow ')': end of cuntion call
-                #                   = handled in second or
-                # second or:
-                #   no space directly after assignment
+                (
+                    # use [^\w\s] instead of \W to avoid backtracking winning from greedy *
+                    #  search(r'\W\s*$', "x ") gives a match
+                    #    chars_before: allow ')': end of function call
+                    #                  = handled in next condition
+                    re.search(r'[^\w\s)=]\s*$', chars_before) and re.search(r'^\s*\d+\s*[^\w\s]', chars_after)
+                ) or (
+                    #  no space directly after assignment
+                    re.search(r'=\s*$', chars_before) and re.search(r'^\s*\d+', chars_after)
+                ) or (
+                    # negative number with whitespace before it (e.g. inside a DML block)
+                    re.search(r'\s+$', chars_before) and re.search(r'^(\d+)', chars_after)
+                )
+            ):
                 if re.search(r'^\s', chars_after):
                     valid = False
                     message_text = 'Unwanted space after minus sign (not operator)'
