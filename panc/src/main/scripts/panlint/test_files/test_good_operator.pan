@@ -16,3 +16,9 @@ prefix "/a";
         idx;
     };
 };
+
+variable DISK_GLITE_VAR_SIZE ?= if ( DISK_GLITE_SCRATCH_SIZE == 0 ) {
+    -1;
+} else {
+    10 * GB;
+};
