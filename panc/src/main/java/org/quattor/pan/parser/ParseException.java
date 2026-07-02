@@ -28,7 +28,7 @@ import org.quattor.pan.ttemplate.SourceRange;
  * This exception is thrown when parse errors are encountered. You can
  * explicitly create objects of this exception type by calling the method
  * generateParseException in the generated parser.
- * 
+ *
  * You can modify this class to customize your error reporting mechanisms so
  * long as you retain the public fields.
  */
@@ -157,7 +157,7 @@ public class ParseException extends RuntimeException {
 			retval += currentToken.next.beginLine + "."
 					+ currentToken.next.beginColumn + "-"
 					+ currentToken.next.endLine + "."
-					+ currentToken.next.endLine + "]\n";
+					+ currentToken.next.endColumn + "]\n";
 		}
 		retval += "\nEncountered: ";
 		Token tok = currentToken.next;
