@@ -151,14 +151,10 @@ public class ParseException extends RuntimeException {
 		}
 		String retval = "parse error ";
 		retval += (file != null) ? "[" + file + ":" : "[?:";
-		if (sourceRange != null) {
-			retval += sourceRange.toString() + "]\n";
-		} else {
-			retval += currentToken.next.beginLine + "."
-					+ currentToken.next.beginColumn + "-"
-					+ currentToken.next.endLine + "."
-					+ currentToken.next.endColumn + "]\n";
-		}
+		if (sourceRange == null) {
+			sourceRange = PanParserUtils.sourceRangeFromTokens(currentToken.next, currentToken.next);
+		};
+		retval += sourceRange.toString() + "]\n";
 		retval += "\nEncountered: ";
 		Token tok = currentToken.next;
 		for (int i = 0; i < maxSize; i++) {
