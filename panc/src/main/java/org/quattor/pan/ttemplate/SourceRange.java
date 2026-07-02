@@ -23,9 +23,9 @@ package org.quattor.pan.ttemplate;
 /**
  * Defines a range of characters within a source pan template that is used to
  * provide detailed error messages.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class SourceRange {
 
