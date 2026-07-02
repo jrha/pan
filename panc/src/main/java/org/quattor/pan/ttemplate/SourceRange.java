@@ -45,13 +45,13 @@ public class SourceRange {
 			throw new IllegalArgumentException("beginLine must be positive");
 		}
 		if (beginColumn < 1) {
-			throw new IllegalArgumentException("beginLine must be positive");
+			throw new IllegalArgumentException("beginColumn must be positive");
 		}
 		if (endLine < 1) {
 			throw new IllegalArgumentException("endLine must be positive");
 		}
 		if (endColumn < 1) {
-			throw new IllegalArgumentException("endLine must be positive");
+			throw new IllegalArgumentException("endColumn must be positive");
 		}
 
 		// Check that ending point is after (or the same as) the starting point.
