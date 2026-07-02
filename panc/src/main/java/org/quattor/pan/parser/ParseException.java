@@ -129,8 +129,7 @@ public class ParseException extends RuntimeException {
 			msg.append("parse error [");
 			msg.append((file != null) ? file.toString() : "?");
 			msg.append(":");
-			msg.append((sourceRange != null) ? sourceRange.toString()
-					: "?");
+			msg.append((sourceRange != null) ? sourceRange.toString() : "?");
 			msg.append("]\n");
 			msg.append(super.getMessage());
 			return msg.toString();
