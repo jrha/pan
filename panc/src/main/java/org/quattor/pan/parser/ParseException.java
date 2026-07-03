@@ -28,7 +28,7 @@ import org.quattor.pan.ttemplate.SourceRange;
  * This exception is thrown when parse errors are encountered. You can
  * explicitly create objects of this exception type by calling the method
  * generateParseException in the generated parser.
- * 
+ *
  * You can modify this class to customize your error reporting mechanisms so
  * long as you retain the public fields.
  */
@@ -129,8 +129,7 @@ public class ParseException extends RuntimeException {
 			msg.append("parse error [");
 			msg.append((file != null) ? file.toString() : "?");
 			msg.append(":");
-			msg.append((sourceRange != null) ? sourceRange.toString()
-					: "?");
+			msg.append((sourceRange != null) ? sourceRange.toString() : "?");
 			msg.append("]\n");
 			msg.append(super.getMessage());
 			return msg.toString();
@@ -152,14 +151,10 @@ public class ParseException extends RuntimeException {
 		}
 		String retval = "parse error ";
 		retval += (file != null) ? "[" + file + ":" : "[?:";
-		if (sourceRange != null) {
-			retval += sourceRange.toString() + "]\n";
-		} else {
-			retval += currentToken.next.beginLine + "."
-					+ currentToken.next.beginColumn + "-"
-					+ currentToken.next.endLine + "."
-					+ currentToken.next.endLine + "]\n";
-		}
+		if (sourceRange == null) {
+			sourceRange = PanParserUtils.sourceRangeFromTokens(currentToken.next, currentToken.next);
+		};
+		retval += sourceRange.toString() + "]\n";
 		retval += "\nEncountered: ";
 		Token tok = currentToken.next;
 		for (int i = 0; i < maxSize; i++) {
